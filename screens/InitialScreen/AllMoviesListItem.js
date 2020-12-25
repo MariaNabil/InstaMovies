@@ -63,6 +63,7 @@ export default class AllMoviesListItem extends PureComponent {
         style={{
           width: '30%',
           height: 150,
+          borderRadius: 5,
         }}></Image>
     );
   };
