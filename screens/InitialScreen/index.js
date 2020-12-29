@@ -42,7 +42,6 @@ export default class InitialScreen extends Component {
   }
 
   fetchMovies = () => {
-    console.log('fetchMovies');
     NetInfo.fetch().then(({isConnected}) => {
       if (isConnected) {
         this.setState({
@@ -54,7 +53,6 @@ export default class InitialScreen extends Component {
         this.cancelFetchData = GetAllMovies(
           this.state.page,
           (res) => {
-            console.log('componentDidMount res', res, res.data.results);
             this.setState({
               allMoviesData: [...this.state.allMoviesData, ...res.data.results],
               total_pages: res.data.total_pages,
@@ -92,7 +90,6 @@ export default class InitialScreen extends Component {
 
   fetchNextPage = () => {
     this.setState({page: this.state.page + 1});
-    console.log('fetchNextPage', this.state.page);
     this.fetchMovies();
   };
 
@@ -115,7 +112,6 @@ export default class InitialScreen extends Component {
   };
 
   onPressExpand = (index) => {
-    console.log('index', index);
     this.setState({
       showPopup: true,
       pressedMovieIndex: index,
@@ -185,7 +181,6 @@ export default class InitialScreen extends Component {
   };
 
   renderHeader = (title) => {
-    console.log('renderHeader');
     return (
       <View
         style={{
@@ -252,11 +247,6 @@ export default class InitialScreen extends Component {
 
   handleScroll = (event) => {
     this.setState({currentScroll: event.nativeEvent.contentOffset.x});
-
-    console.log(
-      this.state.MyMoviesListWidth,
-      event.nativeEvent.contentOffset.x,
-    );
   };
 
   incrementScroll = (increment_by_value) => {
@@ -454,7 +444,6 @@ export default class InitialScreen extends Component {
   };
 
   onReRender = (refresh) => {
-    console.log('onrerender');
     this.setState({
       refreshAllMovies: !this.state.refreshAllMovies,
     });
@@ -482,8 +471,6 @@ export default class InitialScreen extends Component {
   };
 
   render() {
-    console.log('MyMovies', this.state.page);
-
     return (
       <View style={styles.container}>
         {this.renderAllMoviesList()}

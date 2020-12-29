@@ -27,10 +27,6 @@ const HTTP_REQUEST = (
     endpoint = '/' + endpoint;
   }
 
-  console.log(
-    method + ': ',
-    Constants.BASE_URL + endpoint + `&api_key=${Constants.API_KEY}`,
-  );
   axios({
     method,
     headers: {

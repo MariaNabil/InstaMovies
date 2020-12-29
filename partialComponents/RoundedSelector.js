@@ -18,7 +18,6 @@ class RoundedSelector extends Component {
     const {title} = this.props;
 
     if (title) {
-      //   console.log('title', title);
       return (
         <Text
           style={{

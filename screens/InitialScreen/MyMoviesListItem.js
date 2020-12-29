@@ -43,14 +43,6 @@ export default class MyMoviesListItem extends PureComponent {
   };
 
   renderPoster = (poster_path = '/tK1zy5BsCt1J4OzoDicXmr0UTFH.jpg') => {
-    // let uri = `${Constants.IMAGE_BASE_URL}${poster_path}`;
-
-    console.log('renderPoster', poster_path);
-    // let imageWidth =
-    //   global.MyMovies?.length == 1
-    //     ? this.state.screenWidth - 20
-    //     : this.state.screenWidth / 2 - 15;
-
     let imageWidth = this.state.screenWidth / 2 - 15;
     let imageHeight =
       global.MyMovies?.length == 1
