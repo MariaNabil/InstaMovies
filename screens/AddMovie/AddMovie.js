@@ -172,11 +172,11 @@ export default class AddMovie extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {Platform.OS == 'ios' || true ? (
+        {Platform.OS == 'ios' ? (
           <KeyboardAvoidingView
             behavior="padding"
             enabled
-            style={{flex: 1}}
+            style={{flex: 1, width: '100%'}}
             keyboardVerticalOffset={40}>
             {this.renderContent()}
           </KeyboardAvoidingView>
