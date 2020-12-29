@@ -186,6 +186,7 @@ export default class MoviePopup extends PureComponent {
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 10,
+            marginVertical: 50,
           }}>
           <ScrollView
             contentContainerStyle={{
