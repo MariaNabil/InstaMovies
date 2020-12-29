@@ -87,6 +87,14 @@ export default class InitialScreen extends Component {
     });
   };
 
+  onPressExpand = (index) => {
+    this.setState({
+      showPopup: true,
+      pressedMovieIndex: index,
+      isMyMoviePressed: false,
+    });
+  };
+
   onClosePopup = () => {
     this.setState({showPopup: false});
   };
@@ -140,7 +148,8 @@ export default class InitialScreen extends Component {
         renderTopScreen={this.renderTopScreen}
         allMoviesData={this.state.allMoviesData}
         loading={this.state.loading}
-        getPaginationProps={this.getPaginationProps}></AllMovies>
+        getPaginationProps={this.getPaginationProps}
+        onPressExpand={this.onPressExpand}></AllMovies>
     );
   };
 
