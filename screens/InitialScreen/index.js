@@ -19,6 +19,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import Toast from 'react-native-simple-toast';
 import NetInfo from '@react-native-community/netinfo';
+import {shadowStyle2, shadowStyle3} from '../../utils/Styles';
 
 export default class InitialScreen extends Component {
   constructor(props) {
@@ -204,6 +205,51 @@ export default class InitialScreen extends Component {
     );
   };
 
+  renderMyMoviesFooter = () => {
+    const imageSize = 110;
+    return (
+      <View>
+        {global.MyMovies?.length == 1 ? (
+          <TouchableOpacity
+            style={{
+              ...shadowStyle2,
+              borderRadius: 5,
+              backgroundColor: Constants.BACKGROUND_COLOR,
+              margin: 5,
+              marginTop: 0,
+              width: this.state.screenWidth / 2 - 15,
+              height: (this.state.screenWidth / 2 - 15) * 1.5 + 30,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onPress={() => {
+              this.props.navigation.navigate('Add Movie', {
+                onSave: this.onReRender,
+              });
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                this.props.navigation.navigate('Add Movie', {
+                  onSave: this.onReRender,
+                });
+              }}
+              style={{
+                alignSelf: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: imageSize,
+                height: imageSize,
+                borderRadius: imageSize / 2,
+                backgroundColor: 'rgba(72, 74, 84, 0.1)',
+              }}>
+              <Ionicons name={`ios-add`} size={45} />
+            </TouchableOpacity>
+          </TouchableOpacity>
+        ) : null}
+      </View>
+    );
+  };
+
   handleScroll = (event) => {
     this.setState({currentScroll: event.nativeEvent.contentOffset.x});
 
@@ -319,10 +365,12 @@ export default class InitialScreen extends Component {
             MyMoviesListWidth: e.nativeEvent.layout.width,
           });
         }}
+        ListFooterComponent={this.renderMyMoviesFooter}
         horizontal={true}
         style={{
           marginHorizontal: 5,
           marginBottom: 10,
+          marginTop: 5,
         }}
         data={global.MyMovies}
         keyExtractor={({id}) => `${id}`}
@@ -361,7 +409,7 @@ export default class InitialScreen extends Component {
   renderAddIcon = () => {
     return (
       <TouchableOpacity
-        style={{padding: 10}}
+        style={{paddingHorizontal: 10}}
         onPress={() => {
           this.props.navigation.navigate('Add Movie', {
             onSave: this.onReRender,
@@ -417,7 +465,9 @@ export default class InitialScreen extends Component {
       <View>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           {this.renderHeader('My Movies')}
-          {global.MyMovies && global.MyMovies.length != 0
+          {global.MyMovies &&
+          global.MyMovies.length != 0 &&
+          global.MyMovies.length != 1
             ? this.renderAddIcon()
             : null}
         </View>

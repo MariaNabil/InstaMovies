@@ -71,23 +71,25 @@ export default class MyMoviesListItem extends PureComponent {
     const {item, index} = this.props;
     const {title, poster_path, image_uri} = item;
     return (
-      <TouchableOpacity
-        onLayout={(e) => {
-          this.setState({
-            y: e.nativeEvent.layout.y,
-          });
-        }}
-        style={{
-          ...shadowStyle2,
-          borderRadius: 5,
-          backgroundColor: Constants.BACKGROUND_COLOR,
-          margin: 5,
-          marginTop: 0,
-        }}
-        onPress={() => this.props.onPress(index)}>
-        {this.renderPoster(image_uri)}
-        {this.renderTitle(title)}
-      </TouchableOpacity>
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity
+          onLayout={(e) => {
+            this.setState({
+              y: e.nativeEvent.layout.y,
+            });
+          }}
+          style={{
+            ...shadowStyle2,
+            borderRadius: 5,
+            backgroundColor: Constants.BACKGROUND_COLOR,
+            margin: 5,
+            marginTop: 0,
+          }}
+          onPress={() => this.props.onPress(index)}>
+          {this.renderPoster(image_uri)}
+          {this.renderTitle(title)}
+        </TouchableOpacity>
+      </View>
     );
   }
 }

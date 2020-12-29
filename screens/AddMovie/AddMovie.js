@@ -5,6 +5,8 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import RoundedInput from '../../partialComponents/RoundedInput';
 import ImageUploader from '../../partialComponents/ImageUploader';
@@ -137,33 +139,51 @@ export default class AddMovie extends Component {
     );
   };
 
-  render() {
+  renderContent = () => {
     const {title, overview, release_date} = this.state;
+
+    return (
+      <ScrollView style={{width: '100%'}}>
+        {this.renderImageSelector()}
+        <RoundedInput
+          label="Title"
+          value={title}
+          onChangeText={(text) => {
+            this.setState({
+              title: text,
+            });
+          }}></RoundedInput>
+        <RoundedInput
+          multiline={true}
+          label="Overview"
+          value={overview}
+          onChangeText={(text) => {
+            this.setState({
+              overview: text,
+            });
+          }}></RoundedInput>
+        {/* <HorizontalInput label="Title"></HorizontalInput> */}
+        {this.renderDate()}
+        {this.renderSaveButton()}
+      </ScrollView>
+    );
+  };
+
+  render() {
     return (
       <View style={styles.container}>
-        <ScrollView style={{width: '100%'}}>
-          {this.renderImageSelector()}
-          <RoundedInput
-            label="Title"
-            value={title}
-            onChangeText={(text) => {
-              this.setState({
-                title: text,
-              });
-            }}></RoundedInput>
-          <RoundedInput
-            multiline={true}
-            label="Overview"
-            value={overview}
-            onChangeText={(text) => {
-              this.setState({
-                overview: text,
-              });
-            }}></RoundedInput>
-          {/* <HorizontalInput label="Title"></HorizontalInput> */}
-          {this.renderDate()}
-          {this.renderSaveButton()}
-        </ScrollView>
+        {Platform.OS == 'ios' || true ? (
+          <KeyboardAvoidingView
+            behavior="padding"
+            enabled
+            style={{flex: 1}}
+            keyboardVerticalOffset={40}>
+            {this.renderContent()}
+          </KeyboardAvoidingView>
+        ) : (
+          this.renderContent()
+        )}
+
         {this.renderDatePicker()}
       </View>
     );
