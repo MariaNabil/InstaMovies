@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
-  SafeAreaView,
 } from 'react-native';
 import Constants from '../../utils/Constants';
 import {shadowStyle3} from '../../utils/Styles';
@@ -159,11 +158,25 @@ export default class MoviePopup extends PureComponent {
     let item = allMoviesData[pressedMovieIndex];
     const {title, poster_path, overview, release_date, image_uri} = item;
 
+    const deviceWidth = Dimensions.get('window').width;
+    const deviceHeight =
+      Platform.OS === 'ios'
+        ? Dimensions.get('window').height
+        : require('react-native-extra-dimensions-android').get(
+            'REAL_WINDOW_HEIGHT',
+          );
+
     return (
       <Modal
         isVisible={showPopup}
         onBackdropPress={onClosePopup}
-        onSwipeComplete={onClosePopup}>
+        onSwipeComplete={onClosePopup}
+        deviceWidth={deviceWidth}
+        deviceHeight={deviceHeight}
+        animationInTiming={1000}
+        animationOutTiming={1000}
+        backdropTransitionInTiming={800}
+        backdropTransitionOutTiming={800}>
         <View
           style={{
             width: '100%',
@@ -174,28 +187,26 @@ export default class MoviePopup extends PureComponent {
             justifyContent: 'center',
             borderRadius: 10,
           }}>
-          <SafeAreaView>
-            <ScrollView
-              contentContainerStyle={{
-                width: '100%',
-                alignSelf: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              style={{width: '100%'}}>
-              {this.renderPopupCloseButton()}
+          <ScrollView
+            contentContainerStyle={{
+              width: '100%',
+              alignSelf: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            style={{width: '100%'}}>
+            {this.renderPopupCloseButton()}
 
-              <View style={{flexDirection: 'row'}}>
-                {this.renderPopupTitle(title)}
-              </View>
-              {this.renderPopupPoster(
-                this.props.isMyMoviePressed ? image_uri : poster_path,
-              )}
+            <View style={{flexDirection: 'row'}}>
+              {this.renderPopupTitle(title)}
+            </View>
+            {this.renderPopupPoster(
+              this.props.isMyMoviePressed ? image_uri : poster_path,
+            )}
 
-              {this.renderPopupOverview(overview)}
-              {this.renderPopupDate(release_date)}
-            </ScrollView>
-          </SafeAreaView>
+            {this.renderPopupOverview(overview)}
+            {this.renderPopupDate(release_date)}
+          </ScrollView>
         </View>
       </Modal>
     );
