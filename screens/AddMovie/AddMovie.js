@@ -163,7 +163,7 @@ export default class AddMovie extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {Platform.OS == 'ios' || true ? (
+        {Platform.OS == 'ios' ? (
           <KeyboardAvoidingView
             behavior="padding"
             enabled

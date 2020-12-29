@@ -1,12 +1,3 @@
-export const largeBorderRadius = 25;
-export const pagePadding = 10;
-export const largePagePadding = 20;
-export const smallBorderRadius = 5;
-
-export const smallPagePadding = 12; //three dots //products
-export const mediumPagePadding = 17.2; //three dots //customers //categories
-export const xmediumPagePadding = 18.5; //three dots //users // stores
-
 export const shadowStyle0 = {
   shadowColor: '#000',
   shadowOffset: {
@@ -56,9 +47,6 @@ export const shadowStyle3 = {
 };
 
 const Style = {
-  largeBorderRadius,
-  pagePadding,
-  largePagePadding,
   shadowStyle0,
   shadowStyle1,
   shadowStyle2,

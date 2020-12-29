@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {I18nManager, Text, TextInput, View} from 'react-native';
+import {Text, TextInput, View} from 'react-native';
 
 import Constants from '../utils/Constants';
 
@@ -37,9 +37,6 @@ class RoundedInput extends Component {
       <View
         style={{
           marginHorizontal: 20,
-
-          //   width: '100%',
-          //   flex: 1,
           alignSelf: 'stretch',
         }}>
         {this.renderlabel()}

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 
 import {Text, TouchableOpacity} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import Constants from '../utils/Constants';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -25,10 +24,8 @@ class RoundedSelector extends Component {
             marginBottom: 25,
             position: 'absolute',
             bottom: 11,
-
             marginHorizontal: 5,
             paddingHorizontal: 5,
-            // color: secondColor,
             backgroundColor: Constants.BACKGROUND_COLOR,
           }}>
           {title}
@@ -60,7 +57,6 @@ class RoundedSelector extends Component {
         <Text
           style={{
             fontSize: 16,
-            // color: '#202020',
             opacity: info ? 1 : 0.4,
           }}>
           {info ? info : placeholder}
@@ -72,8 +68,6 @@ class RoundedSelector extends Component {
           }}
           name={'arrow-forward-ios'}
           size={20}
-          // color={'#3B3B4D'}
-          // color={mainTextColor}
         />
       </TouchableOpacity>
     );

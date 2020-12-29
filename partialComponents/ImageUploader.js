@@ -2,9 +2,7 @@ import React, {Component} from 'react';
 import {Text, View, TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
 import Toast from 'react-native-simple-toast';
-
 import {showImagePicker} from '../utils/Image';
 import CircularImage from './CircularImage';
 import Constants from '../utils/Constants';
@@ -55,8 +53,6 @@ export default class ImageUploader extends Component {
     const imageSize = !!this.props.imageSize ? this.props.imageSize : 110;
     const {uploadImage} = this.props;
     var {picker_image_uri} = this.state;
-    // if (!!uploadImage) var {uploadingImage, prossesEvent} = this.state;
-    // else var {uploadingImage, prossesEvent} = this.props.imageOptions;
 
     return (
       <TouchableOpacity

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  StyleSheet,
 } from 'react-native';
 import Constants from '../../utils/Constants';
 import {shadowStyle3} from '../../utils/Styles';
@@ -27,6 +28,12 @@ export default class MoviePopup extends PureComponent {
       });
     });
   }
+
+  renderPopupTitle = (title) => {
+    if (title && title != '') {
+      return <Text style={styles.titlStyle}>{title}</Text>;
+    }
+  };
 
   renderPopupPoster = (poster_path) => {
     let uri = this.props.isMyMoviePressed
@@ -50,66 +57,23 @@ export default class MoviePopup extends PureComponent {
       isPlaceholder = true;
     }
     return (
-      <View
-        style={{
-          width: '70%',
-          borderRadius: 5,
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: 10,
-          height: this.state.imageHeight,
-          ...shadowStyle3,
-        }}>
+      <View style={[styles.posterViewStyle, {height: this.state.imageHeight}]}>
         <Image
           source={
             isPlaceholder
               ? require('../../assets/Images/MoviePlaceholder.jpg')
               : {uri: uri}
           }
-          style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: 5,
-
-            // height: this.state.imageHeight,
-            // borderRadius: 5,
-            // marginBottom: 10,
-          }}></Image>
+          style={styles.posterImageStyle}></Image>
       </View>
     );
-  };
-
-  renderPopupTitle = (title) => {
-    if (title && title != '') {
-      return (
-        <Text
-          style={{
-            fontWeight: 'bold',
-            fontSize: 20,
-            paddingVertical: 10,
-            width: '80%',
-            textAlign: 'center',
-            alignSelf: 'center',
-          }}>
-          {title}
-        </Text>
-      );
-    }
   };
 
   renderPopupOverview = (overview) => {
     if (overview && overview != '') {
       return (
-        <View style={{flexDirection: 'row'}}>
-          <Text
-            style={{
-              paddingBottom: 10,
-              width: '80%',
-              textAlign: 'center',
-              fontSize: 15,
-            }}>
-            {overview}
-          </Text>
+        <View style={styles.overviewStyle}>
+          <Text style={styles.overviewTextStyle}>{overview}</Text>
         </View>
       );
     }
@@ -118,15 +82,8 @@ export default class MoviePopup extends PureComponent {
   renderPopupDate = (date) => {
     if (date && date != '')
       return (
-        <View
-          style={{
-            alignItems: 'flex-end',
-            justifyContent: 'flex-end',
-            alignSelf: 'flex-end',
-            padding: 10,
-            paddingTop: 0,
-          }}>
-          <Text style={{textAlign: 'right'}}>{date}</Text>
+        <View style={styles.dateStyle}>
+          <Text style={styles.overviewTextStyle}>{date}</Text>
         </View>
       );
   };
@@ -135,28 +92,37 @@ export default class MoviePopup extends PureComponent {
     return (
       <TouchableOpacity
         onPress={this.props.onClosePopup}
-        style={{
-          right: 10,
-          top: 10,
-          position: 'absolute',
-          zIndex: 2,
-          ...shadowStyle3,
-        }}>
+        style={styles.closeButtonStyle}>
         <Ionicons name="close-circle-outline" color="#444444" size={25} />
       </TouchableOpacity>
     );
   };
 
-  render() {
-    const {
-      allMoviesData,
-      pressedMovieIndex,
-      showPopup,
-      onClosePopup,
-    } = this.props;
+  renderModalContent = () => {
+    const {allMoviesData, pressedMovieIndex} = this.props;
 
     let item = allMoviesData[pressedMovieIndex];
     const {title, poster_path, overview, release_date, image_uri} = item;
+    return (
+      <ScrollView
+        contentContainerStyle={styles.scrollViewContentContainerStyle}
+        style={styles.scrollViewStyle}>
+        {this.renderPopupCloseButton()}
+
+        <View style={styles.contentViewStyle}>
+          {this.renderPopupTitle(title)}
+        </View>
+        {this.renderPopupPoster(
+          this.props.isMyMoviePressed ? image_uri : poster_path,
+        )}
+        {this.renderPopupOverview(overview)}
+        {this.renderPopupDate(release_date)}
+      </ScrollView>
+    );
+  };
+
+  render() {
+    const {showPopup, onClosePopup} = this.props;
 
     const deviceWidth = Dimensions.get('window').width;
     const deviceHeight =
@@ -177,39 +143,68 @@ export default class MoviePopup extends PureComponent {
         animationOutTiming={1000}
         backdropTransitionInTiming={800}
         backdropTransitionOutTiming={800}>
-        <View
-          style={{
-            width: '100%',
-            alignSelf: 'center',
-            backgroundColor: '#FFF',
-            overflow: 'hidden',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 10,
-            marginVertical: 50,
-          }}>
-          <ScrollView
-            contentContainerStyle={{
-              width: '100%',
-              alignSelf: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            style={{width: '100%'}}>
-            {this.renderPopupCloseButton()}
-
-            <View style={{flexDirection: 'row'}}>
-              {this.renderPopupTitle(title)}
-            </View>
-            {this.renderPopupPoster(
-              this.props.isMyMoviePressed ? image_uri : poster_path,
-            )}
-
-            {this.renderPopupOverview(overview)}
-            {this.renderPopupDate(release_date)}
-          </ScrollView>
-        </View>
+        <View style={styles.modalViewStyle}>{this.renderModalContent()}</View>
       </Modal>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  posterViewStyle: {
+    width: '70%',
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+    ...shadowStyle3,
+  },
+  posterImageStyle: {width: '100%', height: '100%', borderRadius: 5},
+  titlStyle: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    paddingVertical: 10,
+    width: '80%',
+    textAlign: 'center',
+    alignSelf: 'center',
+  },
+  overviewStyle: {flexDirection: 'row'},
+  overviewTextStyle: {
+    paddingBottom: 10,
+    width: '80%',
+    textAlign: 'center',
+    fontSize: 15,
+  },
+  dateStyle: {
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    alignSelf: 'flex-end',
+    padding: 10,
+    paddingTop: 0,
+  },
+  dateTextStyle: {textAlign: 'right'},
+  closeButtonStyle: {
+    right: 10,
+    top: 10,
+    position: 'absolute',
+    zIndex: 2,
+    ...shadowStyle3,
+  },
+  scrollViewContentContainerStyle: {
+    width: '100%',
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scrollViewStyle: {width: '100%'},
+  contentViewStyle: {flexDirection: 'row'},
+  modalViewStyle: {
+    width: '100%',
+    alignSelf: 'center',
+    backgroundColor: '#FFF',
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    marginVertical: 50,
+  },
+});

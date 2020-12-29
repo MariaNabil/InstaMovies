@@ -1,8 +1,15 @@
 import React, {PureComponent} from 'react';
-import {Image, Text, View, TouchableOpacity, Dimensions} from 'react-native';
+import {
+  Image,
+  Text,
+  View,
+  TouchableOpacity,
+  Dimensions,
+  StyleSheet,
+} from 'react-native';
 import FastImage from 'react-native-fast-image';
-import Constants from '../../utils/Constants';
-import {shadowStyle2, shadowStyle3} from '../../utils/Styles';
+import Constants from '../../../utils/Constants';
+import {shadowStyle2} from '../../../utils/Styles';
 
 export default class MyMoviesListItem extends PureComponent {
   constructor(props) {
@@ -27,14 +34,7 @@ export default class MyMoviesListItem extends PureComponent {
           style={{
             width: this.state.screenWidth / 2 - 15,
           }}>
-          <Text
-            numberOfLines={1}
-            style={{
-              fontWeight: 'bold',
-              fontSize: 15,
-              paddingVertical: 5,
-              textAlign: 'center',
-            }}>
+          <Text numberOfLines={1} style={styles.titleTextStyle}>
             {title}
           </Text>
         </View>
@@ -42,41 +42,31 @@ export default class MyMoviesListItem extends PureComponent {
     } else return null;
   };
 
-  renderPoster = (poster_path = '/tK1zy5BsCt1J4OzoDicXmr0UTFH.jpg') => {
-    let imageWidth = this.state.screenWidth / 2 - 15;
-    let imageHeight =
-      global.MyMovies?.length == 1
-        ? (this.state.screenWidth / 2 - 15) * 1.5
-        : imageWidth * 1.5;
+  renderPoster = (poster_path) => {
     return (
       <FastImage
         source={{uri: poster_path, priority: FastImage.priority.high}}
-        style={{
-          width: imageWidth,
-          height: imageHeight,
-          borderRadius: 5,
-        }}></FastImage>
+        style={[
+          {
+            width: this.imageWidth,
+            height: this.imageHeight,
+          },
+          styles.posterStyle,
+        ]}></FastImage>
     );
   };
 
   render() {
     const {item, index} = this.props;
-    const {title, poster_path, image_uri} = item;
+    const {title, image_uri} = item;
+
+    this.imageWidth = this.state.screenWidth / 2 - 15;
+    this.imageHeight = this.imageWidth * 1.5;
+
     return (
       <View style={{flexDirection: 'row'}}>
         <TouchableOpacity
-          onLayout={(e) => {
-            this.setState({
-              y: e.nativeEvent.layout.y,
-            });
-          }}
-          style={{
-            ...shadowStyle2,
-            borderRadius: 5,
-            backgroundColor: Constants.BACKGROUND_COLOR,
-            margin: 5,
-            marginTop: 0,
-          }}
+          style={styles.contentStyle}
           onPress={() => this.props.onPress(index)}>
           {this.renderPoster(image_uri)}
           {this.renderTitle(title)}
@@ -85,3 +75,20 @@ export default class MyMoviesListItem extends PureComponent {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  titleTextStyle: {
+    fontWeight: 'bold',
+    fontSize: 15,
+    paddingVertical: 5,
+    textAlign: 'center',
+  },
+  posterStyle: {borderRadius: 5},
+  contentStyle: {
+    ...shadowStyle2,
+    borderRadius: 5,
+    backgroundColor: Constants.BACKGROUND_COLOR,
+    margin: 5,
+    marginTop: 0,
+  },
+});
