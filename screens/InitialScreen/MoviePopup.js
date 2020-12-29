@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import Constants from '../../utils/Constants';
 import {shadowStyle3} from '../../utils/Styles';
@@ -173,27 +174,28 @@ export default class MoviePopup extends PureComponent {
             justifyContent: 'center',
             borderRadius: 10,
           }}>
-          <ScrollView
-            contentContainerStyle={{
-              width: '100%',
+          <SafeAreaView>
+            <ScrollView
+              contentContainerStyle={{
+                width: '100%',
+                alignSelf: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              style={{width: '100%'}}>
+              {this.renderPopupCloseButton()}
 
-              alignSelf: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            style={{width: '100%'}}>
-            {this.renderPopupCloseButton()}
+              <View style={{flexDirection: 'row'}}>
+                {this.renderPopupTitle(title)}
+              </View>
+              {this.renderPopupPoster(
+                this.props.isMyMoviePressed ? image_uri : poster_path,
+              )}
 
-            <View style={{flexDirection: 'row'}}>
-              {this.renderPopupTitle(title)}
-            </View>
-            {this.renderPopupPoster(
-              this.props.isMyMoviePressed ? image_uri : poster_path,
-            )}
-
-            {this.renderPopupOverview(overview)}
-            {this.renderPopupDate(release_date)}
-          </ScrollView>
+              {this.renderPopupOverview(overview)}
+              {this.renderPopupDate(release_date)}
+            </ScrollView>
+          </SafeAreaView>
         </View>
       </Modal>
     );
