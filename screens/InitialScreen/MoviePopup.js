@@ -18,26 +18,64 @@ export default class MoviePopup extends PureComponent {
     this.state = {screenWidth: Dimensions.get('window').width};
   }
 
-  renderPopupPoster = (poster_path = '/tK1zy5BsCt1J4OzoDicXmr0UTFH.jpg') => {
-    let uri = `${Constants.IMAGE_BASE_URL}${poster_path}`;
+  componentDidMount() {
+    //re render when change orientation
+    Dimensions.addEventListener('change', () => {
+      this.setState({
+        screenWidth: Dimensions.get('window').width,
+        screenHeight: Dimensions.get('window').height,
+      });
+    });
+  }
+
+  renderPopupPoster = (poster_path) => {
+    let uri = this.props.isMyMoviePressed
+      ? poster_path
+      : `${Constants.IMAGE_BASE_URL}${poster_path}`;
 
     let imageHeight;
-    Image.getSize(uri, (width, height) => {
-      imageHeight =
-        ((this.state.screenWidth * 70) / 100 - 20) * (height / width);
+    if (poster_path) {
+      Image.getSize(uri, (width, height) => {
+        imageHeight =
+          ((this.state.screenWidth * 70) / 100 - 20) * (height / width);
 
-      this.setState({imageHeight: imageHeight});
-    });
+        this.setState({imageHeight: imageHeight});
+      });
+    } else {
+      this.setState({imageHeight: (this.state.screenWidth * 70) / 100 - 20});
+    }
 
+    let isPlaceholder = false;
+    if (!poster_path || poster_path == '') {
+      isPlaceholder = true;
+    }
     return (
-      <Image
-        source={{uri: uri}}
+      <View
         style={{
           width: '70%',
-          height: this.state.imageHeight,
           borderRadius: 5,
+          alignItems: 'center',
+          justifyContent: 'center',
           marginBottom: 10,
-        }}></Image>
+          height: this.state.imageHeight,
+          ...shadowStyle3,
+        }}>
+        <Image
+          source={
+            isPlaceholder
+              ? require('../../assets/Images/MoviePlaceholder.jpg')
+              : {uri: uri}
+          }
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: 5,
+
+            // height: this.state.imageHeight,
+            // borderRadius: 5,
+            // marginBottom: 10,
+          }}></Image>
+      </View>
     );
   };
 
@@ -88,7 +126,7 @@ export default class MoviePopup extends PureComponent {
             padding: 10,
             paddingTop: 0,
           }}>
-          <Text style={{textAlign: 'right'}}>{`released at : ${date}`}</Text>
+          <Text style={{textAlign: 'right'}}>{date}</Text>
         </View>
       );
   };
@@ -118,7 +156,7 @@ export default class MoviePopup extends PureComponent {
     } = this.props;
 
     let item = allMoviesData[pressedMovieIndex];
-    const {title, poster_path, overview, release_date} = item;
+    const {title, poster_path, overview, release_date, image_uri} = item;
 
     return (
       <Modal
@@ -149,7 +187,9 @@ export default class MoviePopup extends PureComponent {
             <View style={{flexDirection: 'row'}}>
               {this.renderPopupTitle(title)}
             </View>
-            {this.renderPopupPoster(poster_path)}
+            {this.renderPopupPoster(
+              this.props.isMyMoviePressed ? image_uri : poster_path,
+            )}
 
             {this.renderPopupOverview(overview)}
             {this.renderPopupDate(release_date)}

@@ -3,6 +3,8 @@ import {Image, Text, View, TouchableOpacity} from 'react-native';
 import Constants from '../../utils/Constants';
 import {TrimText} from '../../utils/Text';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {shadowStyle3, shadowStyle0, shadowStyle2} from '../../utils/Styles';
+import FastImage from 'react-native-fast-image';
 
 export default class AllMoviesListItem extends PureComponent {
   constructor(props) {
@@ -19,7 +21,8 @@ export default class AllMoviesListItem extends PureComponent {
             fontSize: 17,
             paddingBottom: 5,
             width: '70%',
-          }}>
+          }}
+          numberOfLines={2}>
           {title}
         </Text>
       );
@@ -55,16 +58,26 @@ export default class AllMoviesListItem extends PureComponent {
     }
   };
 
-  renderPoster = (poster_path = '/tK1zy5BsCt1J4OzoDicXmr0UTFH.jpg') => {
+  renderPoster = (poster_path) => {
+    let isPlaceholder = false;
+    if (!poster_path || poster_path == '') {
+      isPlaceholder = true;
+    }
     let uri = `${Constants.IMAGE_BASE_URL}${poster_path}`;
     return (
-      <Image
-        source={{uri: uri}}
+      <FastImage
+        source={
+          isPlaceholder
+            ? require('../../assets/Images/MoviePlaceholder.jpg')
+            : {uri: uri, priority: FastImage.priority.high}
+        }
         style={{
           width: '30%',
           height: 150,
           borderRadius: 5,
-        }}></Image>
+          borderWidth: 0.3,
+          borderColor: 'black',
+        }}></FastImage>
     );
   };
 
@@ -86,12 +99,17 @@ export default class AllMoviesListItem extends PureComponent {
     return (
       <TouchableOpacity
         style={{
-          borderRadius: 15,
+          borderRadius: 5,
           flexDirection: 'row',
           flex: 1,
-          width: '100%',
+          // width: '95%',
           padding: 10,
-          justifyContent: 'space-between',
+          marginVertical: 5,
+          marginHorizontal: 10,
+          // justifyContent: 'space-between',
+          backgroundColor: Constants.BACKGROUND_COLOR,
+          alignSelf: 'center',
+          ...shadowStyle2,
         }}
         onPress={() => this.props.onPress(index)}>
         {this.renderPoster(poster_path)}
