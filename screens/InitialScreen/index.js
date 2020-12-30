@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
-
 import {GetAllMovies} from '../../Services/MoviesServices';
 import MoviePopup from './MoviePopup';
 import Toast from 'react-native-simple-toast';
@@ -27,7 +26,7 @@ export default function InitialScreen(props) {
     };
   }, []);
 
-  const fetchMovies = async () => {
+  const fetchMovies = async (page = 1) => {
     //Check The Internet Connection Before Fetching All Movies
     NetInfo.fetch().then(({isConnected}) => {
       if (isConnected) {
@@ -60,7 +59,7 @@ export default function InitialScreen(props) {
 
   const fetchNextPage = () => {
     setPage(page + 1);
-    fetchMovies();
+    fetchMovies(page + 1);
   };
 
   const onPressMyMovie = (index) => {

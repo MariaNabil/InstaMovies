@@ -58,7 +58,7 @@ export default class MyMoviesListItem extends PureComponent {
 
   render() {
     const {item, index} = this.props;
-    const {title, image_uri} = item;
+    const {title, poster_path} = item;
 
     this.imageWidth = this.state.screenWidth / 2 - 15;
     this.imageHeight = this.imageWidth * 1.5;
@@ -68,7 +68,7 @@ export default class MyMoviesListItem extends PureComponent {
         <TouchableOpacity
           style={styles.contentStyle}
           onPress={() => this.props.onPress(index)}>
-          {this.renderPoster(image_uri)}
+          {this.renderPoster(poster_path)}
           {this.renderTitle(title)}
         </TouchableOpacity>
       </View>

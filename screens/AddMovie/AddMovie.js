@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
@@ -14,20 +14,13 @@ import CustomDatePicker from '../../partialComponents/CustomDatePicker';
 import {formatDate} from '../../utils/Date';
 import RoundedSelector from '../../partialComponents/RoundedSelector';
 import Constants from '../../utils/Constants';
-import Toast from 'react-native-simple-toast';
 
 export default function AddMovie(props) {
-  const [title, setTitle] = useState('');
-  const [overview, setOverview] = useState('');
-  const [release_date, setReleaseDate] = useState(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [image_uri, setImageUri] = useState(null);
-
   const renderImageSelector = () => {
     return (
       <ImageUploader
-        defaultImage={image_uri}
-        onChangeImage={(image_uri) => setImageUri(image_uri)}
+        defaultImage={props.image_uri}
+        onChangeImage={(image_uri) => props.setImageUri(image_uri)}
       />
     );
   };
@@ -36,9 +29,9 @@ export default function AddMovie(props) {
     return (
       <RoundedInput
         label="Title"
-        value={title}
+        value={props.title}
         onChangeText={(text) => {
-          setTitle(text);
+          props.setTitle(text);
         }}></RoundedInput>
     );
   };
@@ -48,9 +41,9 @@ export default function AddMovie(props) {
       <RoundedInput
         multiline={true}
         label="Overview"
-        value={overview}
+        value={props.overview}
         onChangeText={(text) => {
-          setOverview(text);
+          props.setOverview(text);
         }}></RoundedInput>
     );
   };
@@ -60,40 +53,15 @@ export default function AddMovie(props) {
       <RoundedSelector
         placeholder={'Enter Release Date'}
         title={'ReleaseDate'}
-        info={release_date}
-        onPress={() => setShowDatePicker(true)}></RoundedSelector>
+        info={props.release_date}
+        onPress={() => props.setShowDatePicker(true)}></RoundedSelector>
     );
   };
 
   const renderSaveButton = () => {
     return (
       <TouchableOpacity
-        onPress={() => {
-          if (!inputValidation()) return;
-          if (global.MyMovies) {
-            global.MyMovies.push({
-              id: global.MyMovies?.length,
-              image_uri,
-              title,
-              overview,
-              release_date,
-            });
-            props.route.params?.onSave && props.route.params?.onSave();
-            props.navigation.goBack();
-          } else {
-            global.MyMovies = [
-              {
-                id: 0,
-                image_uri,
-                title,
-                overview,
-                release_date,
-              },
-            ];
-            props.route.params?.onSave && props.route.params?.onSave();
-            props.navigation.goBack();
-          }
-        }}
+        onPress={props.saveMovie}
         style={styles.saveButtonStyle}>
         <Text style={styles.saveButtonTextStyle}>{'Save'}</Text>
       </TouchableOpacity>
@@ -103,30 +71,13 @@ export default function AddMovie(props) {
   const renderDatePicker = () => {
     return (
       <CustomDatePicker
-        isVisible={showDatePicker}
+        isVisible={props.showDatePicker}
         onDatePicked={(release_date) => {
-          setReleaseDate(formatDate(release_date));
-          setShowDatePicker(false);
+          props.setReleaseDate(formatDate(release_date));
+          props.setShowDatePicker(false);
         }}
-        onCancel={() => setShowDatePicker(false)}></CustomDatePicker>
+        onCancel={() => props.setShowDatePicker(false)}></CustomDatePicker>
     );
-  };
-
-  const inputValidation = () => {
-    if (!image_uri) {
-      Toast.show('Please Choose A Movie Poster', Toast.LONG);
-      return false;
-    } else if (!title || title == '') {
-      Toast.show('Please Enter A Title', Toast.LONG);
-      return false;
-    } else if (!overview || overview == '') {
-      Toast.show('Please Enter An Overview', Toast.LONG);
-      return false;
-    } else if (!release_date) {
-      Toast.show('Please Enter A Release Date', Toast.LONG);
-      return false;
-    }
-    return true;
   };
 
   const renderContent = () => {

@@ -3,7 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import InitialScreen from '../screens/InitialScreen/index';
 import {SafeAreaView} from 'react-native';
-import AddMovie from '../screens/AddMovie/AddMovie';
+import AddMovie from '../controllers/AddMovie';
 
 const Stack = createStackNavigator();
 

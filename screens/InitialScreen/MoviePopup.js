@@ -28,7 +28,11 @@ export default function MoviePopup(props) {
 
   const renderPopupTitle = (title) => {
     if (title && title != '') {
-      return <Text style={styles.titlStyle}>{title}</Text>;
+      return (
+        <View style={styles.contentViewStyle}>
+          <Text style={styles.titlStyle}>{title}</Text>
+        </View>
+      );
     }
   };
 
@@ -98,15 +102,14 @@ export default function MoviePopup(props) {
     const {allMoviesData, pressedMovieIndex} = props;
 
     let item = allMoviesData[pressedMovieIndex];
-    const {title, poster_path, overview, release_date, image_uri} = item;
+    const {title, poster_path, overview, release_date} = item;
     return (
       <ScrollView
         contentContainerStyle={styles.scrollViewContentContainerStyle}
         style={styles.scrollViewStyle}>
         {renderPopupCloseButton()}
-
-        <View style={styles.contentViewStyle}>{renderPopupTitle(title)}</View>
-        {renderPopupPoster(props.isMyMoviePressed ? image_uri : poster_path)}
+        {renderPopupTitle(title)}
+        {renderPopupPoster(poster_path)}
         {renderPopupOverview(overview)}
         {renderPopupDate(release_date)}
       </ScrollView>
