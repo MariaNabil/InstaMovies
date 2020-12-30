@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -16,95 +16,82 @@ import RoundedSelector from '../../partialComponents/RoundedSelector';
 import Constants from '../../utils/Constants';
 import Toast from 'react-native-simple-toast';
 
-export default class AddMovie extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      title: '',
-      release_date: null,
-      showDatePicker: false,
-    };
-  }
+export default function AddMovie(props) {
+  const [title, setTitle] = useState('');
+  const [overview, setOverview] = useState('');
+  const [release_date, setReleaseDate] = useState(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [image_uri, setImageUri] = useState(null);
 
-  renderImageSelector = () => {
+  const renderImageSelector = () => {
     return (
       <ImageUploader
-        defaultImage={this.state.image_uri}
-        onChangeImage={(image_uri) => this.setState({image_uri: image_uri})}
+        defaultImage={image_uri}
+        onChangeImage={(image_uri) => setImageUri(image_uri)}
       />
     );
   };
 
-  renderTitleInput = () => {
-    const {title} = this.state;
-
+  const renderTitleInput = () => {
     return (
       <RoundedInput
         label="Title"
         value={title}
         onChangeText={(text) => {
-          this.setState({
-            title: text,
-          });
+          setTitle(text);
         }}></RoundedInput>
     );
   };
 
-  renderOverviewInput = () => {
-    const {overview} = this.state;
+  const renderOverviewInput = () => {
     return (
       <RoundedInput
         multiline={true}
         label="Overview"
         value={overview}
         onChangeText={(text) => {
-          this.setState({
-            overview: text,
-          });
+          setOverview(text);
         }}></RoundedInput>
     );
   };
 
-  renderDateInput = () => {
+  const renderDateInput = () => {
     return (
       <RoundedSelector
         placeholder={'Enter Release Date'}
         title={'ReleaseDate'}
-        info={this.state.release_date}
-        onPress={() => this.setState({showDatePicker: true})}></RoundedSelector>
+        info={release_date}
+        onPress={() => setShowDatePicker(true)}></RoundedSelector>
     );
   };
 
-  renderSaveButton = () => {
-    const {image_uri, title, overview, release_date} = this.state;
+  const renderSaveButton = () => {
     return (
       <TouchableOpacity
         onPress={() => {
-          if (!this.inputValidation()) return;
+          if (!inputValidation()) return;
           if (global.MyMovies) {
             global.MyMovies.push({
-              id: 0,
+              id: global.MyMovies?.length,
               image_uri,
               title,
               overview,
               release_date,
             });
-            this.props.route.params?.onSave &&
-              this.props.route.params?.onSave();
-            this.props.navigation.goBack();
+            props.route.params?.onSave && props.route.params?.onSave();
+            props.navigation.goBack();
           } else {
             global.MyMovies = [
               {
-                id: global.MyMovies?.length,
+                id: 0,
                 image_uri,
                 title,
                 overview,
                 release_date,
               },
             ];
-            this.props.route.params?.onSave &&
-              this.props.route.params?.onSave();
-            this.props.navigation.goBack();
+            props.route.params?.onSave && props.route.params?.onSave();
+            props.navigation.goBack();
           }
         }}
         style={styles.saveButtonStyle}>
@@ -113,25 +100,19 @@ export default class AddMovie extends Component {
     );
   };
 
-  renderDatePicker = () => {
-    const {showDatePicker} = this.state;
+  const renderDatePicker = () => {
     return (
       <CustomDatePicker
         isVisible={showDatePicker}
-        onDatePicked={(release_date) =>
-          this.setState({
-            release_date: formatDate(release_date),
-            showDatePicker: false,
-          })
-        }
-        onCancel={() =>
-          this.setState({showDatePicker: false})
-        }></CustomDatePicker>
+        onDatePicked={(release_date) => {
+          setReleaseDate(formatDate(release_date));
+          setShowDatePicker(false);
+        }}
+        onCancel={() => setShowDatePicker(false)}></CustomDatePicker>
     );
   };
 
-  inputValidation = () => {
-    const {image_uri, title, overview, release_date} = this.state;
+  const inputValidation = () => {
     if (!image_uri) {
       Toast.show('Please Choose A Movie Poster', Toast.LONG);
       return false;
@@ -148,36 +129,34 @@ export default class AddMovie extends Component {
     return true;
   };
 
-  renderContent = () => {
+  const renderContent = () => {
     return (
       <ScrollView style={styles.scrollViewStyle}>
-        {this.renderImageSelector()}
-        {this.renderTitleInput()}
-        {this.renderOverviewInput()}
-        {this.renderDateInput()}
-        {this.renderSaveButton()}
+        {renderImageSelector()}
+        {renderTitleInput()}
+        {renderOverviewInput()}
+        {renderDateInput()}
+        {renderSaveButton()}
       </ScrollView>
     );
   };
 
-  render() {
-    return (
-      <View style={styles.container}>
-        {Platform.OS == 'ios' ? (
-          <KeyboardAvoidingView
-            behavior="padding"
-            enabled
-            style={styles.keyboardAvoidingViewStyle}
-            keyboardVerticalOffset={40}>
-            {this.renderContent()}
-          </KeyboardAvoidingView>
-        ) : (
-          this.renderContent()
-        )}
-        {this.renderDatePicker()}
-      </View>
-    );
-  }
+  return (
+    <View style={styles.container}>
+      {Platform.OS == 'ios' ? (
+        <KeyboardAvoidingView
+          behavior="padding"
+          enabled
+          style={styles.keyboardAvoidingViewStyle}
+          keyboardVerticalOffset={40}>
+          {renderContent()}
+        </KeyboardAvoidingView>
+      ) : (
+        renderContent()
+      )}
+      {renderDatePicker()}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

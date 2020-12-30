@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Image,
   Text,
@@ -13,43 +13,39 @@ import {shadowStyle3} from '../../utils/Styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modal';
 
-export default class MoviePopup extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {screenWidth: Dimensions.get('window').width};
-  }
+export default function MoviePopup(props) {
+  const [screenWidth, setScreenWidth] = useState(
+    Dimensions.get('window').width,
+  );
+  const [imageHeight, setImageHeight] = useState(0);
 
-  componentDidMount() {
+  useEffect(() => {
     //re render when change orientation
     Dimensions.addEventListener('change', () => {
-      this.setState({
-        screenWidth: Dimensions.get('window').width,
-        screenHeight: Dimensions.get('window').height,
-      });
+      setScreenWidth(Dimensions.get('window').width);
     });
-  }
+  });
 
-  renderPopupTitle = (title) => {
+  const renderPopupTitle = (title) => {
     if (title && title != '') {
       return <Text style={styles.titlStyle}>{title}</Text>;
     }
   };
 
-  renderPopupPoster = (poster_path) => {
-    let uri = this.props.isMyMoviePressed
+  const renderPopupPoster = (poster_path) => {
+    let uri = props.isMyMoviePressed
       ? poster_path
       : `${Constants.IMAGE_BASE_URL}${poster_path}`;
 
-    let imageHeight;
+    let ImageHeight;
     if (poster_path) {
       Image.getSize(uri, (width, height) => {
-        imageHeight =
-          ((this.state.screenWidth * 70) / 100 - 20) * (height / width);
+        ImageHeight = ((screenWidth * 70) / 100 - 20) * (height / width);
 
-        this.setState({imageHeight: imageHeight});
+        setImageHeight(ImageHeight);
       });
     } else {
-      this.setState({imageHeight: (this.state.screenWidth * 70) / 100 - 20});
+      setImageHeight((screenWidth * 70) / 100 - 20);
     }
 
     let isPlaceholder = false;
@@ -57,7 +53,7 @@ export default class MoviePopup extends PureComponent {
       isPlaceholder = true;
     }
     return (
-      <View style={[styles.posterViewStyle, {height: this.state.imageHeight}]}>
+      <View style={[styles.posterViewStyle, {height: imageHeight}]}>
         <Image
           source={
             isPlaceholder
@@ -69,7 +65,7 @@ export default class MoviePopup extends PureComponent {
     );
   };
 
-  renderPopupOverview = (overview) => {
+  const renderPopupOverview = (overview) => {
     if (overview && overview != '') {
       return (
         <View style={styles.overviewStyle}>
@@ -79,7 +75,7 @@ export default class MoviePopup extends PureComponent {
     }
   };
 
-  renderPopupDate = (date) => {
+  const renderPopupDate = (date) => {
     if (date && date != '')
       return (
         <View style={styles.dateStyle}>
@@ -88,18 +84,18 @@ export default class MoviePopup extends PureComponent {
       );
   };
 
-  renderPopupCloseButton = () => {
+  const renderPopupCloseButton = () => {
     return (
       <TouchableOpacity
-        onPress={this.props.onClosePopup}
+        onPress={props.onClosePopup}
         style={styles.closeButtonStyle}>
         <Ionicons name="close-circle-outline" color="#444444" size={25} />
       </TouchableOpacity>
     );
   };
 
-  renderModalContent = () => {
-    const {allMoviesData, pressedMovieIndex} = this.props;
+  const renderModalContent = () => {
+    const {allMoviesData, pressedMovieIndex} = props;
 
     let item = allMoviesData[pressedMovieIndex];
     const {title, poster_path, overview, release_date, image_uri} = item;
@@ -107,46 +103,40 @@ export default class MoviePopup extends PureComponent {
       <ScrollView
         contentContainerStyle={styles.scrollViewContentContainerStyle}
         style={styles.scrollViewStyle}>
-        {this.renderPopupCloseButton()}
+        {renderPopupCloseButton()}
 
-        <View style={styles.contentViewStyle}>
-          {this.renderPopupTitle(title)}
-        </View>
-        {this.renderPopupPoster(
-          this.props.isMyMoviePressed ? image_uri : poster_path,
-        )}
-        {this.renderPopupOverview(overview)}
-        {this.renderPopupDate(release_date)}
+        <View style={styles.contentViewStyle}>{renderPopupTitle(title)}</View>
+        {renderPopupPoster(props.isMyMoviePressed ? image_uri : poster_path)}
+        {renderPopupOverview(overview)}
+        {renderPopupDate(release_date)}
       </ScrollView>
     );
   };
 
-  render() {
-    const {showPopup, onClosePopup} = this.props;
+  const {showPopup, onClosePopup} = props;
 
-    const deviceWidth = Dimensions.get('window').width;
-    const deviceHeight =
-      Platform.OS === 'ios'
-        ? Dimensions.get('window').height
-        : require('react-native-extra-dimensions-android').get(
-            'REAL_WINDOW_HEIGHT',
-          );
+  const deviceWidth = Dimensions.get('window').width;
+  const deviceHeight =
+    Platform.OS === 'ios'
+      ? Dimensions.get('window').height
+      : require('react-native-extra-dimensions-android').get(
+          'REAL_WINDOW_HEIGHT',
+        );
 
-    return (
-      <Modal
-        isVisible={showPopup}
-        onBackdropPress={onClosePopup}
-        onSwipeComplete={onClosePopup}
-        deviceWidth={deviceWidth}
-        deviceHeight={deviceHeight}
-        animationInTiming={1000}
-        animationOutTiming={1000}
-        backdropTransitionInTiming={800}
-        backdropTransitionOutTiming={800}>
-        <View style={styles.modalViewStyle}>{this.renderModalContent()}</View>
-      </Modal>
-    );
-  }
+  return (
+    <Modal
+      isVisible={showPopup}
+      onBackdropPress={onClosePopup}
+      onSwipeComplete={onClosePopup}
+      deviceWidth={deviceWidth}
+      deviceHeight={deviceHeight}
+      animationInTiming={1000}
+      animationOutTiming={1000}
+      backdropTransitionInTiming={800}
+      backdropTransitionOutTiming={800}>
+      <View style={styles.modalViewStyle}>{renderModalContent()}</View>
+    </Modal>
+  );
 }
 
 const styles = StyleSheet.create({

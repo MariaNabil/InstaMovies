@@ -1,11 +1,5 @@
-import React, {Component} from 'react';
-import {
-  StyleSheet,
-  View,
-  Dimensions,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 
 import {GetAllMovies} from '../../Services/MoviesServices';
 import MoviePopup from './MoviePopup';
@@ -14,127 +8,107 @@ import NetInfo from '@react-native-community/netinfo';
 import MyMovies from './MyMovies';
 import AllMovies from './AllMovies';
 
-export default class InitialScreen extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showPopup: false,
-      pressedMovieIndex: -1,
-      isMyMoviePressed: false,
-      total_pages: 0,
-      page: 1,
-      allMoviesData: [],
-      loading: false,
-      showReloadButton: false,
-      lockFetching: false,
+export default function InitialScreen(props) {
+  const [showPopup, setShowPopup] = useState(false);
+  const [pressedMovieIndex, setPressedMovieIndex] = useState(0);
+  const [isMyMoviePressed, setIsMyMoviePressed] = useState(false);
+  const [total_pages, setTotalPages] = useState(0);
+  const [page, setPage] = useState(1);
+  const [allMoviesData, setAllMoviesData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showReloadButton, setShowReloadButton] = useState(false);
+  const [lockFetching, setLockFetching] = useState(false);
+  let cancelFetchData;
+
+  useEffect(() => {
+    fetchMovies();
+    return () => {
+      cancelFetchData && cancelFetchData();
     };
-  }
+  }, []);
 
-  componentDidMount() {
-    this.fetchMovies();
-  }
-
-  componentWillUnmount() {
-    this.cancelFetchData && this.cancelFetchData();
-  }
-
-  fetchMovies = () => {
+  const fetchMovies = async () => {
     //Check The Internet Connection Before Fetching All Movies
     NetInfo.fetch().then(({isConnected}) => {
       if (isConnected) {
-        this.setState({
-          loading: true,
-          showReloadButton: false,
-          lockFetching: true,
-        });
-        this.cancelFetchData = GetAllMovies(
-          this.state.page,
+        setLoading(true);
+        setShowReloadButton(false);
+        setLockFetching(true);
+        cancelFetchData = GetAllMovies(
+          page,
           (res) => {
-            this.setState({
-              allMoviesData: [...this.state.allMoviesData, ...res.data.results],
-              total_pages: res.data.total_pages,
-              loading: false,
-              lockFetching: false,
-            });
+            setAllMoviesData([...allMoviesData, ...res.data.results]);
+            setTotalPages(res.data.total_pages);
+            setLoading(false);
+            setLockFetching(false);
           },
           (error) => {
-            this.setState({
-              loading: false,
-              lockFetching: false,
-            });
+            setLoading(false);
+            setLockFetching(false);
           },
         );
       } else {
+        // If Not Connected To the Internet
         Toast.show(
           'You Are Offline , Please Check Your Internet Connection',
           Toast.LONG,
         );
-        this.setState({showReloadButton: true});
+        setShowReloadButton(true);
       }
     });
   };
 
-  fetchNextPage = () => {
-    this.setState({page: this.state.page + 1});
-    this.fetchMovies();
+  const fetchNextPage = () => {
+    setPage(page + 1);
+    fetchMovies();
   };
 
-  onPressMyMovie = (index) => {
-    this.setState({
-      showPopup: true,
-      pressedMovieIndex: index,
-      isMyMoviePressed: true,
-    });
+  const onPressMyMovie = (index) => {
+    setShowPopup(true);
+    setPressedMovieIndex(index);
+    setIsMyMoviePressed(true);
   };
 
-  onPressExpand = (index) => {
-    this.setState({
-      showPopup: true,
-      pressedMovieIndex: index,
-      isMyMoviePressed: false,
-    });
+  const onPressExpand = (index) => {
+    setShowPopup(true);
+    setPressedMovieIndex(index);
+    setIsMyMoviePressed(false);
   };
 
-  onClosePopup = () => {
-    this.setState({showPopup: false});
+  const onClosePopup = () => {
+    setShowPopup(false);
   };
 
-  onReRender = () => {
-    this.setState({});
+  const onReload = () => {
+    setPage(1);
+    fetchMovies();
   };
 
-  onReload = () => {
-    this.setState({page: 1});
-    this.fetchMovies();
-  };
   //Get Pagination Props Of All Movies List
-  getPaginationProps = () => {
+  const getPaginationProps = () => {
     return {
       onEndReachedThreshold: 1,
       onEndReached: () => {
-        if (
-          this.state.page != this.state.total_pages &&
-          !this.state.lockFetching
-        ) {
-          this.fetchNextPage();
+        if (page != total_pages && !lockFetching) {
+          fetchNextPage();
         }
       },
     };
   };
 
-  renderTopScreen = () => {
+  const renderTopScreen = () => {
     return (
       <View>
         <MyMovies
-          navigation={this.props.navigation}
-          onPressMyMovie={this.onPressMyMovie}></MyMovies>
-        {this.renderAllMoviesHeader()}
-        {this.state.showReloadButton ? this.renderReloadButton() : null}
+          navigation={props.navigation}
+          onPressMyMovie={onPressMyMovie}></MyMovies>
+        {renderAllMoviesHeader()}
+        {showReloadButton ? renderReloadButton() : null}
       </View>
     );
   };
 
-  renderAllMoviesHeader = () => {
+  const renderAllMoviesHeader = () => {
     return (
       <View style={styles.allMoviesHeaderStyle}>
         <Text style={styles.allMoviesHeaderTextStyle}>{'All Movies'}</Text>
@@ -142,22 +116,20 @@ export default class InitialScreen extends Component {
     );
   };
 
-  renderAllMoviesList = () => {
+  const renderAllMoviesList = () => {
     return (
       <AllMovies
-        renderTopScreen={this.renderTopScreen}
-        allMoviesData={this.state.allMoviesData}
-        loading={this.state.loading}
-        getPaginationProps={this.getPaginationProps}
-        onPressExpand={this.onPressExpand}></AllMovies>
+        renderTopScreen={renderTopScreen}
+        allMoviesData={allMoviesData}
+        loading={loading}
+        getPaginationProps={getPaginationProps}
+        onPressExpand={onPressExpand}></AllMovies>
     );
   };
 
-  renderReloadButton = () => {
+  const renderReloadButton = () => {
     return (
-      <TouchableOpacity
-        style={styles.reloadButtonStyle}
-        onPress={this.onReload}>
+      <TouchableOpacity style={styles.reloadButtonStyle} onPress={onReload}>
         <View style={styles.reloadButtonViewStyle}>
           <Text style={styles.reloadButtonTextStyle}>{'Reload'}</Text>
         </View>
@@ -165,33 +137,25 @@ export default class InitialScreen extends Component {
     );
   };
 
-  renderMoviePopup = () => {
-    const {
-      showPopup,
-      allMoviesData,
-      isMyMoviePressed,
-      pressedMovieIndex,
-    } = this.state;
+  const renderMoviePopup = () => {
     if (showPopup) {
       return (
         <MoviePopup
           allMoviesData={isMyMoviePressed ? global.MyMovies : allMoviesData}
           pressedMovieIndex={pressedMovieIndex}
           showPopup={showPopup}
-          onClosePopup={this.onClosePopup}
+          onClosePopup={onClosePopup}
           isMyMoviePressed={isMyMoviePressed}></MoviePopup>
       );
     } else return null;
   };
 
-  render() {
-    return (
-      <View style={styles.container}>
-        {this.renderAllMoviesList()}
-        {this.renderMoviePopup()}
-      </View>
-    );
-  }
+  return (
+    <View style={styles.container}>
+      {renderAllMoviesList()}
+      {renderMoviePopup()}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
