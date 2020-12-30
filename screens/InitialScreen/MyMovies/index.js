@@ -26,6 +26,7 @@ export default class MyMovies extends Component {
     };
   }
 
+  //re render when change orientation
   componentDidMount() {
     Dimensions.addEventListener('change', () => {
       this.setState({
@@ -35,14 +36,33 @@ export default class MyMovies extends Component {
     });
   }
 
+  //ReRender My Movies List When Adding New Movie
   onReRender = () => {
     this.setState({});
   };
 
+  //Go To Add Movie Screen
   goToAddMovie = () => {
     this.props.navigation.navigate('Add Movie', {
       onSave: this.onReRender,
     });
+  };
+
+  //Set currentScroll Horizontal Position
+  handleScroll = (event) => {
+    this.setState({currentScroll: event.nativeEvent.contentOffset.x});
+  };
+
+  //Scroll To The Next Movie When Pressing On Scroll Button
+  incrementScroll = (increment_by_value) => {
+    this.setState({
+      currentScroll: this.state.currentScroll + increment_by_value,
+    });
+    this.listRef.scrollToOffset({offset: +increment_by_value});
+  };
+
+  onPressScroll = () => {
+    this.incrementScroll(this.state.screenWidth / 2);
   };
 
   renderMyMoviesListItem = ({item, index}) => {
@@ -94,27 +114,6 @@ export default class MyMovies extends Component {
         </View>
       </TouchableOpacity>
     );
-  };
-
-  handleScroll = (event) => {
-    this.setState({currentScroll: event.nativeEvent.contentOffset.x});
-  };
-
-  incrementScroll = (increment_by_value) => {
-    this.setState({
-      currentScroll: this.state.currentScroll + increment_by_value,
-    });
-    this.listRef.scrollToOffset({offset: +increment_by_value});
-  };
-
-  onPressScroll = () => {
-    this.incrementScroll(this.state.screenWidth / 2);
-  };
-
-  hideScrollButton = () => {
-    this.setState({
-      isScrollButtonShown: false,
-    });
   };
 
   renderScrollButton = () => {

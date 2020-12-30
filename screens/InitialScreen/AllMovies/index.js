@@ -11,6 +11,7 @@ import Constants from '../../../utils/Constants';
 import AllMoviesListItem from './AllMoviesListItem';
 
 export default class MyMovies extends Component {
+  // Display Loading Indicator At The Bottom Of The List When New Data Is Still Loading
   renderFooterIndicator = () => {
     if (this.props.loading) {
       return (

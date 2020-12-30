@@ -78,6 +78,7 @@ export default function InitialScreen(props) {
     setShowPopup(false);
   };
 
+  //Called To Reload All Movies If The Internet Connection Had a Problem
   const onReload = () => {
     setPage(1);
     fetchMovies();

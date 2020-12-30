@@ -9,6 +9,7 @@ export default function AddMovie(props) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [image_uri, setImageUri] = useState(null);
 
+  // Validate That Each Movie Has Poster, Title, Overview And release Date
   const inputValidation = () => {
     if (!image_uri) {
       Toast.show('Please Choose A Movie Poster', Toast.LONG);
@@ -26,6 +27,7 @@ export default function AddMovie(props) {
     return true;
   };
 
+  //Save New Movie In global array of Movie "MyMovies"
   const saveMovie = () => {
     if (!inputValidation()) return;
     let movie = new Movie(
@@ -37,11 +39,14 @@ export default function AddMovie(props) {
       (is_remote = false),
     );
 
+    //If there is saved movies in MyMovies
     if (global.MyMovies) {
       global.MyMovies.push(movie);
     } else {
+      //If this is th first item in MyMovies
       global.MyMovies = [movie];
     }
+    //Go To The InitialScreen and ReRender MyMovies List
     props.route.params?.onSave && props.route.params?.onSave();
     props.navigation.goBack();
   };

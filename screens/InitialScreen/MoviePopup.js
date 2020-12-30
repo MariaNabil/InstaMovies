@@ -18,6 +18,14 @@ export default function MoviePopup(props) {
     Dimensions.get('window').width,
   );
   const [imageHeight, setImageHeight] = useState(0);
+  const {showPopup, onClosePopup} = props;
+  const deviceWidth = Dimensions.get('window').width;
+  const deviceHeight =
+    Platform.OS === 'ios'
+      ? Dimensions.get('window').height
+      : require('react-native-extra-dimensions-android').get(
+          'REAL_WINDOW_HEIGHT',
+        );
 
   useEffect(() => {
     //re render when change orientation
@@ -41,21 +49,24 @@ export default function MoviePopup(props) {
       ? poster_path
       : `${Constants.IMAGE_BASE_URL}${poster_path}`;
 
-    let ImageHeight;
-    if (poster_path) {
-      Image.getSize(uri, (width, height) => {
-        ImageHeight = ((screenWidth * 70) / 100 - 20) * (height / width);
-
-        setImageHeight(ImageHeight);
-      });
-    } else {
-      setImageHeight((screenWidth * 70) / 100 - 20);
-    }
-
+    //If There Is No poster Add A Placeholder Image
     let isPlaceholder = false;
     if (!poster_path || poster_path == '') {
       isPlaceholder = true;
     }
+
+    //Set ImageHeight As The Ratio Between Width And High Of the Original Image
+    let ImageHeight;
+    if (!isPlaceholder) {
+      Image.getSize(uri, (width, height) => {
+        ImageHeight = ((screenWidth * 70) / 100 - 20) * (height / width);
+        setImageHeight(ImageHeight);
+      });
+    } else {
+      // If PlaceholderImage
+      setImageHeight((screenWidth * 70) / 100 - 20);
+    }
+
     return (
       <View style={[styles.posterViewStyle, {height: imageHeight}]}>
         <Image
@@ -115,16 +126,6 @@ export default function MoviePopup(props) {
       </ScrollView>
     );
   };
-
-  const {showPopup, onClosePopup} = props;
-
-  const deviceWidth = Dimensions.get('window').width;
-  const deviceHeight =
-    Platform.OS === 'ios'
-      ? Dimensions.get('window').height
-      : require('react-native-extra-dimensions-android').get(
-          'REAL_WINDOW_HEIGHT',
-        );
 
   return (
     <Modal
