@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import Toast from 'react-native-simple-toast';
+import {exp} from 'react-native/Libraries/Animated/src/Easing';
 import Movie from '../model/Movie';
 
 export default function AddMovie(props) {

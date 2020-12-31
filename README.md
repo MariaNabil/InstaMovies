@@ -35,3 +35,4 @@ For ios :
 - I used mvc pattern for Add Movie Screen .
 - most screens are functional components .
 - I used global to add new movies in My Movies .
+- I added two tests using jest .

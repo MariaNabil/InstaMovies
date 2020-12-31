@@ -28,33 +28,32 @@ export default function InitialScreen(props) {
 
   const fetchMovies = async (page = 1) => {
     //Check The Internet Connection Before Fetching All Movies
-    NetInfo.fetch().then(({isConnected}) => {
-      if (isConnected) {
-        setLoading(true);
-        setShowReloadButton(false);
-        setLockFetching(true);
-        cancelFetchData = GetAllMovies(
-          page,
-          (res) => {
-            setAllMoviesData([...allMoviesData, ...res.data.results]);
-            setTotalPages(res.data.total_pages);
-            setLoading(false);
-            setLockFetching(false);
-          },
-          (error) => {
-            setLoading(false);
-            setLockFetching(false);
-          },
-        );
-      } else {
-        // If Not Connected To the Internet
-        Toast.show(
-          'You Are Offline , Please Check Your Internet Connection',
-          Toast.LONG,
-        );
-        setShowReloadButton(true);
-      }
-    });
+    const {isConnected} = await NetInfo.fetch();
+    if (isConnected) {
+      setLoading(true);
+      setShowReloadButton(false);
+      setLockFetching(true);
+      cancelFetchData = GetAllMovies(
+        page,
+        (res) => {
+          setAllMoviesData([...allMoviesData, ...res.data.results]);
+          setTotalPages(res.data.total_pages);
+          setLoading(false);
+          setLockFetching(false);
+        },
+        (error) => {
+          setLoading(false);
+          setLockFetching(false);
+        },
+      );
+    } else {
+      // If Not Connected To the Internet
+      Toast.show(
+        'You Are Offline , Please Check Your Internet Connection',
+        Toast.LONG,
+      );
+      setShowReloadButton(true);
+    }
   };
 
   const fetchNextPage = () => {
